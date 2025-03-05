@@ -1,0 +1,35 @@
+# Smithery.ai configuration
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    properties:
+      port:
+        type: integer
+        description: "Port for the MCP server to listen on (default: 3000)"
+        default: 3000
+      logLevel:
+        type: string
+        enum: ["error", "warn", "info", "debug"]
+        description: "Log level for the MCP server"
+        default: "info"
+    additionalProperties: false
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    (config) => {
+      const env = {
+        NODE_ENV: "production",
+        MCP_PORT: config.port || 3000,
+        LOG_LEVEL: config.logLevel || "info"
+      };
+      
+      return {
+        "command": "npx",
+        "args": [
+          "@agentdeskai/browser-tools-mcp@1.1.0"
+        ],
+        "env": env
+      };
+    }
